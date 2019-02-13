@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.springframework.org/schema/mvc">
+<head>
+    <title>Passing Paraments</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script th:inline="javascript">
+        function init() {
+            document.title.innerHTML = [[${title}]];
+            document.getElementById("text").innerHTML = [[${text}]];
+            document.getElementById("nextPageUrl").setAttribute("href",[[${nextPageUrl}]]);
+        }
+
+    </script>
+</head>
+<body onload="init()">
+<div id = "text"></div>
+<a id="nextPageUrl" href="#">下一页</a>
+</body>
+</html>
