@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.springframework.org/schema/mvc">
+<head>
+    <title>Passing Paraments</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <script th:inline="javascript">
+        function init() {
+            document.title.innerHTML = [[${title}]];
+            document.getElementById("bdTitle").innerHTML = [[${bdTitle}]];
+            document.getElementById("u3m8Url").innerHTML = [[${u3m8Url}]];
+            document.getElementById("nextPage").innerHTML=[[${nextPage}]];
+        }
+
+    </script>
+</head>
+<body onload="init()">
+<div id="bdTitle"></div>
+<div id = "u3m8Url"></div>
+<div id = "nextPage"></div>
+</body>
+</html>
