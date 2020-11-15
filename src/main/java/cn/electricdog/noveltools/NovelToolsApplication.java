@@ -119,7 +119,7 @@ public class NovelToolsApplication {
     @GetMapping(value = "/{name}")
     public String getWinNum(@PathVariable("name") String name) {
         RestTemplate restTemplate = new RestTemplate();
-        MatchListModel matchListModel = JSON.parseObject(restTemplate.getForObject("http://300report.jumpw.com/api/getlist?name={0}", String.class, name), MatchListModel.class);
+        MatchListModel matchListModel = JSON.parseObject(restTemplate.getForObject("https://300report.jumpw.com/api/getlist?name={0}", String.class, name), MatchListModel.class);
         String serverDay, tmpNewDate, lastMatchDate;
         Integer win = 0, lose =0 , runaway =0 ,index = 0;
         if (matchListModel != null && matchListModel.getResult().equals("OK")) {
@@ -130,7 +130,7 @@ public class NovelToolsApplication {
             serverDay = tmpNewDate = lastMatchDate.split(" ")[0];
 
             while (serverDay.equals(tmpNewDate)) {
-                matchListModel = JSON.parseObject(restTemplate.getForObject("http://300report.jumpw.com/api/getlist?name={0}&index={1}", String.class, name,index), MatchListModel.class);
+                matchListModel = JSON.parseObject(restTemplate.getForObject("https://300report.jumpw.com/api/getlist?name={0}&index={1}", String.class, name,index), MatchListModel.class);
                 for (MatchModel matchModel : matchListModel.getList()) {
                     tmpNewDate = matchModel.getMatchDate().split(" ")[0];
                     if (!tmpNewDate.equals(serverDay)) {
