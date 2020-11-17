@@ -1,15 +1,14 @@
-package cn.electricdog.noveltools;
-
-        import java.util.Map;
+package cn.electricdog.noveltools.pojo.matchlist;
 
 public class MatchModel {
-   private String MatchID;
+    private String MatchID;
     private Integer MatchType;
     private Integer HeroLevel;
     private Integer Result;
     private String MatchDate;
     private String HeroName;
     private String HeroIcon;
+
     public String getMatchID() {
         return MatchID;
     }

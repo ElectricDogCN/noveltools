@@ -1,13 +1,13 @@
-package cn.electricdog.noveltools;
+package cn.electricdog.noveltools.pojo.matchlist;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class MatchListModel {
+public class MatchListResult {
     String Result;
     List<MatchModel> List;
 
-    public MatchListModel(String result, List<MatchModel> list) {
+    public MatchListResult(String result, List<MatchModel> list) {
         Result = result;
         if(result!= null && list!= null&&"OK".equals(result)){
             List = list;

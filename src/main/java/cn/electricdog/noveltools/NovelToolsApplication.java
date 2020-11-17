@@ -1,5 +1,11 @@
 package cn.electricdog.noveltools;
 
+import cn.electricdog.noveltools.pojo.Result;
+import cn.electricdog.noveltools.pojo.ResultModel;
+import cn.electricdog.noveltools.pojo.match.MatchResult;
+import cn.electricdog.noveltools.pojo.match.Role;
+import cn.electricdog.noveltools.pojo.matchlist.MatchListResult;
+import cn.electricdog.noveltools.pojo.matchlist.MatchModel;
 import com.alibaba.fastjson.JSON;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -8,17 +14,13 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.HashMap;
 
 
 /**
@@ -26,6 +28,7 @@ import java.util.HashMap;
  */
 @SpringBootApplication
 @Controller
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RequestMapping("/")
 public class NovelToolsApplication {
 
@@ -114,53 +117,148 @@ public class NovelToolsApplication {
         return request.getRemoteAddr();
     }
 
+    @GetMapping(value = "300hero")
+    public String toolsFor300Hero() {
+        return "300heroTools/index";
+    }
 
     @ResponseBody
-    @GetMapping(value = "/{name}")
-    public String getWinNum(@PathVariable("name") String name) {
+    @GetMapping(value = "300hero/{name}")
+    public String getWinNum(@PathVariable("name") String name, String date) {
         RestTemplate restTemplate = new RestTemplate();
-        MatchListModel matchListModel = JSON.parseObject(restTemplate.getForObject("https://300report.jumpw.com/api/getlist?name={0}", String.class, name), MatchListModel.class);
+        MatchListResult matchListResult = JSON.parseObject(restTemplate.getForObject("https://300report.jumpw.com/api/getlist?name={0}", String.class, name), MatchListResult.class);
         String serverDay, tmpNewDate, lastMatchDate;
-        Integer win = 0, lose =0 , runaway =0 ,index = 0;
-        if (matchListModel != null && matchListModel.getResult().equals("OK")) {
-            if (matchListModel.getList().size() == 0) {
-                return "未查询到比赛结果或ID输入有误，请稍后再试！";
-            }
-            lastMatchDate = matchListModel.getList().get(0).getMatchDate();
-            serverDay = tmpNewDate = lastMatchDate.split(" ")[0];
+        Integer jjcWin = 0, jjcLose = 0, jjcRunaway = 0, index = 0, zcWin = 0, zcLose = 0, zcRunaway = 0;
+        if (matchListResult != null && matchListResult.getResult().equals("OK")) {
+            if (matchListResult.getList().size() == 0) {
 
-            while (serverDay.equals(tmpNewDate)) {
-                matchListModel = JSON.parseObject(restTemplate.getForObject("https://300report.jumpw.com/api/getlist?name={0}&index={1}", String.class, name,index), MatchListModel.class);
-                for (MatchModel matchModel : matchListModel.getList()) {
+                return new Result(2, "未查询到比赛结果或ID输入有误，请稍后再试！", null).toString();
+            }
+            lastMatchDate = matchListResult.getList().get(0).getMatchDate();
+            tmpNewDate = lastMatchDate.split(" ")[0];
+            //检测输入的时间是否合法 如果合法使用输入事件 否则使用最后一条比赛记录时间日期
+            if (date != null && DateTools.isValidDate(date)) {
+                serverDay = DateTools.formatDateStr(date);
+            } else {
+                serverDay = tmpNewDate;
+            }
+            ResultModel result = new ResultModel(name, DateTools.date2Str(new Date(), "yyyy-MM-dd HH:mm:ss"), serverDay);
+
+            while ( DateTools.str2Date(tmpNewDate).getTime()>=DateTools.str2Date(serverDay).getTime()) {
+                matchListResult = JSON.parseObject(
+                        restTemplate.getForObject("https://300report.jumpw.com/api/getlist?name={0}&index={1}", String.class, name, index)
+                        , MatchListResult.class);
+                for (MatchModel matchModel : matchListResult.getList()) {
                     tmpNewDate = matchModel.getMatchDate().split(" ")[0];
                     if (!tmpNewDate.equals(serverDay)) {
                         break;
                     }
-                    if(matchModel.getMatchType() != 2){
-                        continue;
-                    }
-                    System.out.println(matchModel.toString());
-                    switch (matchModel.getResult()) {
-                        case 1:
-                            win ++;
-                            break;
-                        case 2:
-                            lose++;
-                            break;
-                        case 3:
-                            runaway++;
-                            break;
-                        default:
-                            break;
+
+                    MatchResult matchResult = JSON.parseObject(
+                            restTemplate.getForObject("https://300report.jumpw.com/api/getmatch?id={0}", String.class, matchModel.getMatchID())
+                            , MatchResult.class);
+
+                    if (matchModel.getMatchType() == 1) {
+                        if (result.getJjcTotal() == 0) {
+                            result.setJjcLastMatchTime(matchModel.getMatchDate());
+                        }
+                        Long t1 = DateTools.str2Date(result.getJjcLastMatchTime(), "yyyy-MM-dd HH:mm:ss").getTime();
+                        Long t2 = DateTools.str2Date(matchModel.getMatchDate(), "yyyy-MM-dd HH:mm:ss").getTime();
+                        result.setJjcLastMatchTime(t1 >= t2 ? result.getJjcLastMatchTime() : matchModel.getMatchDate());
+                        result.jjcTotal++;
+                        switch (matchModel.getResult()) {
+                            case 1:
+                                result.jjcWin++;
+                                for (Role role : matchResult.getMatch().getWinSide()) {
+                                    if (!role.getRoleName().equals(name)) {
+                                        continue;
+                                    }
+                                    result.jjcKillTotal += role.getKillCount();
+                                    result.jjcAssistTotal += role.getAssistCount();
+                                    result.jjcDeathTotal += role.getDeathCount();
+                                    result.jjcKillUnitTotal += role.getKillUnitCount();
+                                    result.jjcRewardExp += role.getRewardExp();
+                                    result.jjcRewardMoney += role.getRewardMoney();
+                                    result.jjcTowerDestroy += role.getTowerDestroy();
+                                    break;
+                                }
+                                break;
+                            case 2:
+                                result.jjcLose++;
+                                for (Role role : matchResult.getMatch().getLoseSide()) {
+                                    if (!role.getRoleName().equals(name)) {
+                                        continue;
+                                    }
+                                    result.jjcAssistTotal += role.getAssistCount();
+                                    result.jjcKillTotal += role.getKillCount();
+                                    result.jjcDeathTotal += role.getDeathCount();
+                                    result.jjcKillUnitTotal += role.getKillUnitCount();
+                                    result.jjcRewardExp += role.getRewardExp();
+                                    result.jjcRewardMoney += role.getRewardMoney();
+                                    result.jjcTowerDestroy += role.getTowerDestroy();
+                                    break;
+                                }
+                                break;
+                            case 3:
+                                result.jjcRunaway++;
+                                break;
+                            default:
+                                break;
+                        }
+                    } else {
+                        if (result.getZcTotal() == 0) {
+                            result.setZcLastMatchTime(matchModel.getMatchDate());
+                        }
+                        Long t1 = DateTools.str2Date(result.getZcLastMatchTime(), "yyyy-MM-dd HH:mm:ss").getTime();
+                        Long t2 = DateTools.str2Date(matchModel.getMatchDate(), "yyyy-MM-dd HH:mm:ss").getTime();
+                        result.setZcLastMatchTime(t1 >= t2 ? result.getZcLastMatchTime() : matchModel.getMatchDate());
+                        result.zcTotal++;
+                        switch (matchModel.getResult()) {
+                            case 1:
+                                result.zcWin++;
+                                for (Role role : matchResult.getMatch().getWinSide()) {
+                                    if (!role.getRoleName().equals(name)) {
+                                        continue;
+                                    }
+                                    result.zcAssistTotal += role.getAssistCount();
+                                    result.zcKillTotal += role.getKillCount();
+                                    result.zcDeathTotal += role.getDeathCount();
+                                    result.zcKillUnitTotal += role.getKillUnitCount();
+                                    result.zcRewardExp += role.getRewardExp();
+                                    result.zcRewardMoney += role.getRewardMoney();
+                                    result.zcTowerDestroy += role.getTowerDestroy();
+                                    break;
+                                }
+                                break;
+                            case 2:
+                                result.zcLose++;
+                                for (Role role : matchResult.getMatch().getLoseSide()) {
+                                    if (!role.getRoleName().equals(name)) {
+                                        continue;
+                                    }
+                                    result.zcKillTotal += role.getKillCount();
+                                    result.zcAssistTotal += role.getAssistCount();
+                                    result.zcDeathTotal += role.getDeathCount();
+                                    result.zcKillUnitTotal += role.getKillUnitCount();
+                                    result.zcRewardExp += role.getRewardExp();
+                                    result.zcRewardMoney += role.getRewardMoney();
+                                    result.zcTowerDestroy += role.getTowerDestroy();
+                                    break;
+                                }
+                                break;
+                            case 3:
+                                result.zcRunaway++;
+                                break;
+                            default:
+                                break;
+                        }
                     }
                 }
-                index+=10;
+                index += 10;
             }
-            return "name:"+name+" win:"+win+" lose:"+lose+" runaway:"+runaway +" date:"+serverDay +" last:"+ lastMatchDate;
+            return new Result(0, "ok", result.refresh()).toString();
         }
-
-
-        return "无用户信息!";
+        return new Result(1, "无角色信息！", null).toString();
     }
 }
 
