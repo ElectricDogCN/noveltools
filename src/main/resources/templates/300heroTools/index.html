@@ -1,142 +1,184 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="utf-8" />
-		<link rel="shortcut icon" href="300heroTools/img/favicon.ico" type="image/x-icon">
-		<link rel="stylesheet" type="text/css" href="300heroTools/css/toolsv1.css" />
-		<script src="300heroTools/js/jquery-1.8.3.min.js" type="text/javascript" charset="utf-8"></script>
-		<script src="300heroTools/js/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
-		<script src="300heroTools/js/toolsv1.js" type="text/javascript" charset="utf-8"></script>
-		<title></title>
-	</head>
-	<body>
-		<div id="bg"></div>
-		<div id="show">
-		             查询中。。。<br />
-		所选日期越远，所需查询时间越长，等稍后。。。
-		</div>
-		<div>
-			<input type="text" id="usernameInput" value="" placeholder="请输入角色名" />&nbsp;
-			<input type="text" id="date" readonly="readonly" style="width: 80px;"> &nbsp;
-			<input type="button" value=" 查询  " onclick="queryData()" />
-		</div>
-		<table class="lamp" id="info" hidden="hidden">
-			<tr>
-				<th>角色名:</th>
-				<td id="username">查询中</td>
-			</tr>
-			<tr>
-				<th>查询时间:</th>
-				<td id="queryTime">查询中</td>
-			</tr>
-			<tr>
-				<th>查询日期:</th>
-				<td id="queryDate">查询中</td>
-			</tr>
-			<tr>
-				<th>总场次:</th>
-				<td id="total">查询中</td>
-			</tr>
-			<tr>
-				<th>总金币:</th>
-				<td id="rewardMoney">查询中</td>
-			</tr>
-			<tr>
-				<th>总经验:</th>
-				<td id="exp">查询中</td>
-			</tr>
-			<tr>
-				<th>总助攻:</th>
-				<td id="assistTotal">查询中</td>
-			</tr>
-			<tr>
-				<th>总击杀:</th>
-				<td id="killTotal">查询中</td>
-			</tr>
-			<tr>
-				<th>总死亡:</th>
-				<td id="deathTotal">查询中</td>
-			</tr>
-			<tr>
-				<th>总建筑摧毁:</th>
-				<td id="towerDestroy">查询中</td>
-			</tr>
-			<tr>
-				<th>总小兵击杀:</th>
-				<td id="killUnitTotal">查询中</td>
-			</tr>
-			<tr>
-				<td>
-					<table class="lamp">
-						<tr>
-							<th colspan="2">竞技场</th>
-						</tr>
-						<tr>
-							<th>击杀:</th>
-							<td id="jjcKillTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>死亡:</th>
-							<td id="jjcDeathTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>助攻:</th>
-							<td id="jjcAssistTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>摧毁建筑:</th>
-							<td id="jjcTowerDestroy">查询中</td>
-						</tr>
-						<tr>
-							<th>小兵击杀:</th>
-							<td id="jjcKillUnitTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>金币获取:</th>
-							<td id="jjcRewardMoney">查询中</td>
-						</tr>
-						<tr>
-							<th>经验获取:</th>
-							<td id="jjcRewardExp">查询中</td>
-						</tr>
-					</table>
-				</td>
-				<td>
-					<table class="lamp">
-						<tr>
-							<th colspan="2">战场</th>
-						</tr>
-						<tr>
-							<th>击杀:</th>
-							<td id="zcKillTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>死亡:</th>
-							<td id="zcDeathTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>助攻:</th>
-							<td id="zcAssistTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>摧毁建筑:</th>
-							<td id="zcTowerDestroy">查询中</td>
-						</tr>
-						<tr>
-							<th>小兵击杀:</th>
-							<td id="zcKillUnitTotal">查询中</td>
-						</tr>
-						<tr>
-							<th>金币获取:</th>
-							<td id="zcRewardMoney">查询中</td>
-						</tr>
-						<tr>
-							<th>经验获取:</th>
-							<td id="zcRewardExp">查询中</td>
-						</tr>
-					</table>
-				</td>
-			</tr>
-		</table>
-	</body>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="shortcut icon" href="300heroTools/img/favicon.ico" type="image/x-icon">
+        <link rel="stylesheet" type="text/css" href="300heroTools/css/toolsv1.css"/>
+        <script src="300heroTools/js/jquery-1.8.3.min.js" type="text/javascript" charset="utf-8"></script>
+        <script src="300heroTools/js/laydate/laydate.js" type="text/javascript" charset="utf-8"></script>
+        <script src="300heroTools/js/toolsv1.js" type="text/javascript" charset="utf-8"></script>
+        <title></title>
+    </head>
+    <body>
+        <div id="bg"></div>
+        <div id="show">
+            查询中。。。<br/>
+            所选日期越远，所需查询时间越长，等稍后。。。
+        </div>
+        <div>
+            <input type="text" id="usernameInput" value="" placeholder="请输入角色名" onpaste="return true"/>&nbsp;
+            <span id="fkios">
+				<input type="text" id="date" readonly="readonly" style="width: 80px;"> &nbsp;
+			</span>
+            <input type="button" value=" 查询  " onclick="queryData()"/>
+        </div>
+        <table class="lamp" id="info" hidden="hidden">
+            <tr>
+                <th>角色名:</th>
+                <td id="username">查询中</td>
+            </tr>
+            <tr>
+                <th>查询时间:</th>
+                <td id="queryTime">查询中</td>
+            </tr>
+            <tr>
+                <th>查询日期:</th>
+                <td id="queryDate">查询中</td>
+            </tr>
+            <tr>
+                <th>总场次:</th>
+                <td id="total">查询中</td>
+            </tr>
+            <tr>
+                <th>总金币:</th>
+                <td id="rewardMoney">查询中</td>
+            </tr>
+            <tr>
+                <th>总经验:</th>
+                <td id="exp">查询中</td>
+            </tr>
+            <tr>
+                <th>总助攻:</th>
+                <td id="assistTotal">查询中</td>
+            </tr>
+            <tr>
+                <th>总击杀:</th>
+                <td id="killTotal">查询中</td>
+            </tr>
+            <tr>
+                <th>总死亡:</th>
+                <td id="deathTotal">查询中</td>
+            </tr>
+            <tr>
+                <th>总建筑摧毁:</th>
+                <td id="towerDestroy">查询中</td>
+            </tr>
+            <tr>
+                <th>总小兵击杀:</th>
+                <td id="killUnitTotal">查询中</td>
+            </tr>
+            <tr>
+                <td>
+                    <table class="lamp">
+                        <tr>
+                            <th colspan="2">竞技场</th>
+                        </tr>
+                        <tr>
+                            <th>胜利:</th>
+                            <td id="jjcWin">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>失败:</th>
+                            <td id="jjcLose">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>逃跑:</th>
+                            <td id="jjcRunaway">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>小计:</th>
+                            <td id="jjcTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>击杀:</th>
+                            <td id="jjcKillTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>死亡:</th>
+                            <td id="jjcDeathTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>助攻:</th>
+                            <td id="jjcAssistTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>摧毁建筑:</th>
+                            <td id="jjcTowerDestroy">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>小兵击杀:</th>
+                            <td id="jjcKillUnitTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>金币获取:</th>
+                            <td id="jjcRewardMoney">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>经验获取:</th>
+                            <td id="jjcRewardExp">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>最后对战时间:</th>
+                            <td id="jjcLastMatchTime">查询中</td>
+                        </tr>
+                    </table>
+                </td>
+                <td>
+                    <table class="lamp">
+                        <tr>
+                            <th colspan="2">战场</th>
+                        </tr>
+                        <tr>
+                            <th>胜利:</th>
+                            <td id="zcWin">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>失败:</th>
+                            <td id="zcLose">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>逃跑:</th>
+                            <td id="zcRunaway">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>小计:</th>
+                            <td id="zcTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>击杀:</th>
+                            <td id="zcKillTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>死亡:</th>
+                            <td id="zcDeathTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>助攻:</th>
+                            <td id="zcAssistTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>摧毁建筑:</th>
+                            <td id="zcTowerDestroy">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>小兵击杀:</th>
+                            <td id="zcKillUnitTotal">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>金币获取:</th>
+                            <td id="zcRewardMoney">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>经验获取:</th>
+                            <td id="zcRewardExp">查询中</td>
+                        </tr>
+                        <tr>
+                            <th>最后对战时间:</th>
+                            <td id="zcLastMatchTime">查询中</td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </body>
 </html>
